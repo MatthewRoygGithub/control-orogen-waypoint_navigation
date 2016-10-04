@@ -1,0 +1,34 @@
+name "waypoint_navigation"
+version "0.1"
+
+import_types_from "base"
+
+using_library "waypoint_navigation"
+
+
+task_context "Task" do
+    property("maxTv", "double").
+            doc "maximum forward speed, in m/s"
+
+    property("maxRv", "double").
+            doc "maximum rotational speed, in rad/s"
+
+    input_port("trajectory", "/std/vector</base/Waypoint>").
+        doc "Trajectory the robot should follow"
+
+    input_port("pose", "base/samples/RigidBodyState").
+        doc "Position and orientation of the Robot"
+
+    output_port("motion_command", "base/MotionCommand2D").
+        doc "Drive command that should steer the robot to the target Pose"
+
+    output_port("currentWaypoint", "base/Waypoint").
+        doc "the waypoint towards which we are currently going"
+
+    runtime_states :DRIVING,
+        :ALIGNING,
+        :STOPPED, 
+
+    needs_configuration
+    port_driven
+end
