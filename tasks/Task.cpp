@@ -49,10 +49,11 @@ void Task::updateHook()
     if (!trajectory.empty() && _pose.readNewest(pose) != RTT::NoData)
     {
 	     follower->setPose(pose);
-       follower->update();
 
-      // Get motion command
-    	base::MotionCommand2D mc;
+       // Get motion command
+       base::commands::Motion2D mc;
+       follower->update(mc);
+
 
       /* Hide this from the component to library
       follower->getMovementCommand(mc.translation, mc.rotation);
