@@ -27,7 +27,8 @@ task_context "Task" do
 
     runtime_states :DRIVING,
         :ALIGNING,
-        :STOPPED, 
+        :TARGET_REACHED,
+        :OUT_OF_BOUNDARIES,
 
     needs_configuration
     port_driven
