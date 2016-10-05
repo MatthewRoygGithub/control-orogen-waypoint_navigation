@@ -61,7 +61,7 @@ void Task::updateHook()
       */
 
       // Propagate the Path Tracker state from the library to the component
-      NavigationState curentState = follower.getNavigationState();
+      NavigationState curentState = follower->getNavigationState();
       switch(curentState) {
           case DRIVING:
             state(DRIVING);
@@ -69,8 +69,11 @@ void Task::updateHook()
           case ALIGNING:
             state(ALIGNING);
             break;
-          case STOPPED:
-            state(STOPPED)
+          case TARGET_REACHED:
+            state(TARGET_REACHED);
+            break;
+          case OUT_OF_BOUNDARIES:
+            state(OUT_OF_BOUNDARIES);
             break;
       }
       // WRITE TO OUTPUTS
