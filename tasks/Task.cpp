@@ -75,7 +75,7 @@ void Task::updateHook()
       }
       // WRITE TO OUTPUTS
       _currentWaypoint.write(*(follower->getLookaheadPoint()));
-
+      _motion_command.write(mc);
   }
 }
 
