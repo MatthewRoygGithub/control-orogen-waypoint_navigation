@@ -21,7 +21,24 @@ bool Task::configureHook()
 
     follower = new WaypointNavigation();
     trajectory.clear();
+
+    uint N = 3;
+    trajectory.resize(N);
+    std::vector<base::Waypoint*> ptrajectory(N);
+    for (size_t i = 0; i < N; i++)
+    {
+        trajectory.at(i).position = Eigen::Vector3d(i+1.0,6,0);
+        trajectory.at(i).heading  = 0.0/180.0*M_PI;
+        trajectory.at(i).tol_position = 0.1;
+        ptrajectory.at(i) = &trajectory.at(i);
+        //trajectory.push_back(lpoint);
+    }
+    std::cout << "Trajectory created" << std::endl;
+    follower->setTrajectory(ptrajectory);
+//  follower->setNavigationState((NavigationState)DRIVING);
+    std::cout << "Trajectory set" << std::endl;
     return true;
+
 }
 
 // bool Task::startHook()
@@ -48,7 +65,7 @@ void Task::updateHook()
     base::samples::RigidBodyState pose;
     if (!trajectory.empty() && _pose.readNewest(pose) != RTT::NoData)
     {
-	     follower->setPose(pose);
+       follower->setPose(pose);
 
        // Get motion command
        base::commands::Motion2D mc;
