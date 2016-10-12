@@ -21,13 +21,23 @@ bool Task::configureHook()
     Config configuration = _tracker_config.get();
     pathTracker = new WaypointNavigation(configuration);
     trajectory.clear();
-    return true;
-}
 
-// bool Task::startHook()
-// {
-//     return true;
-// }
+    uint N = 3;
+    trajectory.resize(N);
+    std::vector<base::Waypoint*> ptrajectory(N);
+    for (size_t i = 0; i < N; i++)
+    {
+        trajectory.at(i).position = Eigen::Vector3d(i+1.0,6,0);
+        trajectory.at(i).heading  = 0.0/180.0*M_PI;
+        trajectory.at(i).tol_position = 0.1;
+        ptrajectory.at(i) = &trajectory.at(i);
+    }
+    std::cout << "Trajectory created" << std::endl;
+    pathTracker->setTrajectory(ptrajectory);
+    std::cout << "Trajectory set" << std::endl;
+    return true;
+
+}
 
 void Task::updateHook()
 {
@@ -53,12 +63,6 @@ void Task::updateHook()
        // Get motion command
        base::commands::Motion2D mc;
        pathTracker->update(mc);
-
-
-      /* Hide this from the component to library
-      pathTracker->getMovementCommand(mc.translation, mc.rotation);
-      pathTracker->getAlignmentCommand(mc.translation, mc.rotation);
-      */
 
       // Propagate the Path Tracker state from the library to the component
       NavigationState curentState = pathTracker->getNavigationState();
