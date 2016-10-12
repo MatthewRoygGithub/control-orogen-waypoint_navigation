@@ -11,7 +11,7 @@ namespace waypoint_navigation {
 	friend class TaskBase;
     protected:
 	///Instance of the dumbTrajectoryFollower driver
-	WaypointNavigation *follower;
+	WaypointNavigation *pathTracker;
 	///Trajectory in the format of the driver
 	std::vector<base::Waypoint> trajectory;
 
@@ -47,7 +47,7 @@ namespace waypoint_navigation {
          *
          * The warning(), error() and fatal() calls, when called in this hook,
          * allow to get into the associated RunTimeWarning, RunTimeError and
-         * FatalError states. 
+         * FatalError states.
          *
          * In the first case, updateHook() is still called, and recovered()
          * allows you to go back into the Running state.  In the second case,
@@ -60,7 +60,7 @@ namespace waypoint_navigation {
          * instance, a periodic update), then this set is empty.
          */
         void updateHook();
-        
+
 
         /** This hook is called by Orocos when the component is in the
          * RunTimeError state, at each activity step. See the discussion in
@@ -84,4 +84,3 @@ namespace waypoint_navigation {
 }
 
 #endif
-

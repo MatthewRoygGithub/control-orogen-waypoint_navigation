@@ -1,17 +1,19 @@
 name "waypoint_navigation"
 version "0.1"
 
-import_types_from "base"
-
 using_library "waypoint_navigation"
+
+import_types_from "base"
+import_types_from "Config.hpp"
+
+
 
 
 task_context "Task" do
-    property("maxTv", "double").
-            doc "maximum forward speed, in m/s"
-
-    property("maxRv", "double").
-            doc "maximum rotational speed, in rad/s"
+   #**** Tracker Parameters ****
+   property("tracker_config", "Config").
+   doc 'General configuration values of the tracker and robot'
+   #****************************
 
     input_port("trajectory", "/std/vector</base/Waypoint>").
         doc "Trajectory the robot should follow"

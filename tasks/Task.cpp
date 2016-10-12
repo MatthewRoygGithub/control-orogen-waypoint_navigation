@@ -6,7 +6,7 @@ using namespace waypoint_navigation;
 Task::Task(std::string const& name)
     : TaskBase(name)
 {
-    follower = NULL;
+    pathTracker = NULL;
 }
 
 /// The following lines are template definitions for the various state machine
@@ -15,11 +15,11 @@ Task::Task(std::string const& name)
 
 bool Task::configureHook()
 {
-    //defaults
-    _maxTv.set(0.6);
-    _maxRv.set(1.5);
+  if (! TaskBase::configureHook())
+      return false;
 
-    follower = new WaypointNavigation();
+    Config configuration = _tracker_config.get();
+    pathTracker = new WaypointNavigation(configuration);
     trajectory.clear();
     return true;
 }
@@ -41,48 +41,57 @@ void Task::updateHook()
         {
             waypoints.push_back(new base::Waypoint(*it)); // Add element to the end of the vector
         }
-        follower->setTrajectory(waypoints);
+        pathTracker->setTrajectory(waypoints);
     }
 
      // Set pose if the trajectory is not empty and Pose contains data
     base::samples::RigidBodyState pose;
     if (!trajectory.empty() && _pose.readNewest(pose) != RTT::NoData)
     {
-	     follower->setPose(pose);
+	     pathTracker->setPose(pose);
 
        // Get motion command
        base::commands::Motion2D mc;
-       follower->update(mc);
+       pathTracker->update(mc);
 
 
       /* Hide this from the component to library
-      follower->getMovementCommand(mc.translation, mc.rotation);
-      follower->getAlignmentCommand(mc.translation, mc.rotation);
+      pathTracker->getMovementCommand(mc.translation, mc.rotation);
+      pathTracker->getAlignmentCommand(mc.translation, mc.rotation);
       */
 
       // Propagate the Path Tracker state from the library to the component
-      NavigationState curentState = follower->getNavigationState();
+      NavigationState curentState = pathTracker->getNavigationState();
       switch(curentState) {
-          case DRIVING:
+          case DRIVING:{
             state(DRIVING);
             break;
-          case ALIGNING:
+          }
+          case ALIGNING:{
             state(ALIGNING);
             break;
-          case TARGET_REACHED:
+          }
+          case TARGET_REACHED:{
             state(TARGET_REACHED);
             break;
-          case OUT_OF_BOUNDARIES:
+          }
+          case OUT_OF_BOUNDARIES:{
             state(OUT_OF_BOUNDARIES);
             break;
+          }
+          default:{
+            break;
+          }
       }
       // WRITE TO OUTPUTS
-      _currentWaypoint.write(*(follower->getLookaheadPoint()));
+      _currentWaypoint.write(*(pathTracker->getLookaheadPoint()));
       _motion_command.write(mc);
   }
 }
 
 void Task::cleanupHook()
 {
-    delete follower;
+    TaskBase::cleanupHook();
+
+    delete pathTracker;
 }
