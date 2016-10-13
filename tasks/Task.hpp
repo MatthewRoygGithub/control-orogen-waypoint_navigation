@@ -4,7 +4,9 @@
 #include "waypoint_navigation/TaskBase.hpp"
 #include <base/waypoint.h>
 
-class WaypointNavigation;
+namespace waypoint_navigation_lib{
+	class WaypointNavigation;
+}
 
 namespace waypoint_navigation {
     class Task : public TaskBase
@@ -12,7 +14,7 @@ namespace waypoint_navigation {
 	friend class TaskBase;
     protected:
 	///Instance of the dumbTrajectoryFollower driver
-	WaypointNavigation *pathTracker;
+	waypoint_navigation_lib::WaypointNavigation *pathTracker;
 	///Trajectory in the format of the driver
 	std::vector<base::Waypoint> trajectory;
 

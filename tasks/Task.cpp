@@ -18,7 +18,7 @@ bool Task::configureHook()
 	if (! TaskBase::configureHook())
       		return false;
 	pathTrackerConfig ptConfig = _ptConfig.value();
-	pathTracker = new WaypointNavigation();
+	pathTracker = new waypoint_navigation_lib::WaypointNavigation();
 	assert( pathTracker->configure(
 		ptConfig.minTurnRadius,
 		ptConfig.translationalVelocity,
@@ -118,21 +118,21 @@ void Task::updateHook()
        }
 
       // Propagate the Path Tracker state from the library to the component
-      NavigationState curentState = pathTracker->getNavigationState();
+      waypoint_navigation_lib::NavigationState curentState = pathTracker->getNavigationState();
       switch(curentState) {
-          case DRIVING:{
+          case waypoint_navigation_lib::DRIVING:{
             state(DRIVING);
             break;
           }
-          case ALIGNING:{
+          case waypoint_navigation_lib::ALIGNING:{
             state(ALIGNING);
             break;
           }
-          case TARGET_REACHED:{
+          case waypoint_navigation_lib::TARGET_REACHED:{
             state(TARGET_REACHED);
             break;
           }
-          case OUT_OF_BOUNDARIES:{
+          case waypoint_navigation_lib::OUT_OF_BOUNDARIES:{
             state(OUT_OF_BOUNDARIES);
             break;
           }
