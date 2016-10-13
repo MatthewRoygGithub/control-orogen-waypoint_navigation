@@ -1,10 +1,11 @@
-#ifndef DUMBTRAJECTORYFOLLOWER_TASK_TASK_HPP
-#define DUMBTRAJECTORYFOLLOWER_TASK_TASK_HPP
+#ifndef WAYPOINT_NAVIGATION_TASK_TASK_HPP
+#define WAYPOINT_NAVIGATION_TASK_TASK_HPP
 
 #include "waypoint_navigation/TaskBase.hpp"
 #include <base/waypoint.h>
 
 class WaypointNavigation;
+
 namespace waypoint_navigation {
     class Task : public TaskBase
     {

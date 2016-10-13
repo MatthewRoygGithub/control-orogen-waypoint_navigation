@@ -15,12 +15,17 @@ Task::Task(std::string const& name)
 
 bool Task::configureHook()
 {
-  if (! TaskBase::configureHook())
-      return false;
-
-    pathTracker = new WaypointNavigation();
-    trajectory.clear();
-
+	if (! TaskBase::configureHook())
+      		return false;
+	pathTrackerConfig ptConfig = _ptConfig.value();
+	pathTracker = new WaypointNavigation();
+	assert( pathTracker->configure(
+		ptConfig.minTurnRadius,
+		ptConfig.translationalVelocity,
+		ptConfig.rotationalVelocity,
+		ptConfig.corridor,
+		ptConfig.lookaheadDistance));
+	trajectory.clear();
     /*
 1,2093.531,7419.216
 2,3936.113,7199.626

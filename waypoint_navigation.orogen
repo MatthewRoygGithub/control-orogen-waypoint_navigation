@@ -4,11 +4,12 @@ version "0.1"
 using_library "waypoint_navigation"
 
 import_types_from "base"
-
-
+import_types_from "waypoint_navigationTypes.hpp"
 
 
 task_context "Task" do
+    property('ptConfig', 'waypoint_navigation/pathTrackerConfig').
+        doc 'Configuration of Path Tracker parameters, namely distances, velocities and turn radius'
 
     input_port("trajectory", "/std/vector</base/Waypoint>").
         doc "Trajectory the robot should follow"
@@ -22,11 +23,7 @@ task_context "Task" do
     output_port("currentWaypoint", "base/Waypoint").
         doc "the waypoint towards which we are currently going"
 
-    runtime_states
-        :DRIVING,
-        :ALIGNING,
-        :TARGET_REACHED,
-        :OUT_OF_BOUNDARIES,
+    runtime_states :DRIVING, :ALIGNING, :TARGET_REACHED, :OUT_OF_BOUNDARIES
 
     needs_configuration
     port_driven
