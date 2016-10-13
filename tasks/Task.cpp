@@ -18,8 +18,7 @@ bool Task::configureHook()
   if (! TaskBase::configureHook())
       return false;
 
-    Config configuration = _tracker_config.get();
-    pathTracker = new WaypointNavigation(configuration);
+    pathTracker = new WaypointNavigation();
     trajectory.clear();
 
     uint N = 3;
