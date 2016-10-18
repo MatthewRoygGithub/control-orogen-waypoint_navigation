@@ -67,7 +67,7 @@ bool Task::configureHook()
         //uint selectWaypoints[] = {5, 6, 11, 16, 20, 19, 13, 9, 5};
         //uint N = 9;
         // Force point turns
-        uint selectWaypoints[] = {7, 3, 1};
+        uint selectWaypoints[] = {5, 6, 7, 3, 2, 1};
         uint N = 3;
 
 

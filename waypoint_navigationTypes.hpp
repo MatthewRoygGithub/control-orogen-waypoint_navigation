@@ -28,7 +28,3 @@ namespace waypoint_navigation {
     };
 }
 #endif
-
-
-
-
