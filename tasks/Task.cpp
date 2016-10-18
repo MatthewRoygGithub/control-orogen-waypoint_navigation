@@ -19,13 +19,16 @@ bool Task::configureHook()
       		return false;
 	pathTrackerConfig ptConfig = _ptConfig.value();
 	pathTracker = new waypoint_navigation_lib::WaypointNavigation();
-	assert( pathTracker->configure(
+        assert(	pathTracker->configure(
 		ptConfig.minTurnRadius,
 		ptConfig.translationalVelocity,
 		ptConfig.rotationalVelocity,
 		ptConfig.corridor,
 		ptConfig.lookaheadDistance));
 	trajectory.clear();
+
+        std::cout << "Path Tracker configured using " <<
+        pathTracker->getLookaheadDistance() << "m lookahead distance." << std::endl;
     /*
 1,2093.531,7419.216
 2,3936.113,7199.626
