@@ -6,7 +6,7 @@ ptConfig:
   rotationalVelocity: 0.15
   corridor: 0.2
   maxDisalignment: 0.15
-  lookaheadDistance: 0.6
+  lookaheadDistance: 0.60
 
 --- name:exoter
 # Configuration of Path Tracker parameters, namely distances, velocities and turn radius
@@ -16,4 +16,4 @@ ptConfig:
   rotationalVelocity: 0.15
   corridor: 0.2
   maxDisalignment: 0.15
-  lookaheadDistance: 0.6
+  lookaheadDistance: 0.50
