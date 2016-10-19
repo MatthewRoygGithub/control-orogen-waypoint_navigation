@@ -70,8 +70,8 @@ bool Task::configureHook()
         //uint selectWaypoints[] = {5, 6, 11, 16, 20, 19, 13, 9, 5};
         //uint N = 9;
         // Force point turns
-        uint selectWaypoints[] = {5, 6, 7, 3, 2, 1};
-        uint N = 3;
+        uint selectWaypoints[] = {2, 3, 7, 6};
+        uint N = 4;
 
 
     trajectory.resize(N);
@@ -83,6 +83,7 @@ bool Task::configureHook()
         trajectory.at(i).tol_position = 0.1;
         ptrajectory.at(i) = &trajectory.at(i);
     }
+    trajectory.at(N-1).tol_heading = 5/180*M_PI;
     std::cout << "Trajectory created" << std::endl;
     pathTracker->setTrajectory(ptrajectory);
     std::cout << "Trajectory set" << std::endl;
