@@ -60,7 +60,7 @@ bool Task::configureHook()
         //double xpos[] = {5.806, 4.405, 2.914, 1.208, 1.014, 1.305, 2.150};
 	//double ypos[] = {2.396, 1.069, 1.386, 0.978, 2.683, 4.224, 5.739};
         // Redone using indexing
-        double xpos[] = {2.093, 3.936, 5.602, 7.834, 2.150, 3.906, 5.843, 7.567, 1.305, 4.283, 5.741, 7.483, 1.014, 2.950, 4.300, 5.806, 7.227, 1.208, 2.914, 4.405, 7.051};
+        double xpos[] = {2.093, 3.936, 5.602, 7.834, 2.150, 3.906, 5.843, 7.567, 0.705, 4.283, 5.741, 7.483, 1.014, 2.950, 4.300, 5.806, 7.227, 1.208, 2.914, 4.405, 7.051};
         double ypos[] = {7.419, 7.199, 7.409, 7.899, 5.739, 5.781, 5.952, 5.951, 4.224, 4.015, 3.961, 3.926, 2.683, 2.549, 2.388, 2.396, 2.404, 0.978, 1.386, 1.069, 1.132};
         
         // Big loop
@@ -69,9 +69,13 @@ bool Task::configureHook()
         // Small loop, worked well, point turn once at #13
         //uint selectWaypoints[] = {5, 6, 11, 16, 20, 19, 13, 9, 5};
         //uint N = 9;
-        // Force point turns
-        uint selectWaypoints[] = {2, 3, 7, 6};
-        uint N = 4;
+        // Double loop
+//        uint selectWaypoints[] = {5, 6, 11, 15, 14, 13, 9, 5, 6, 11, 15, 14, 13, 9, 5};
+  //      uint N = 15;
+        // Go home
+        uint selectWaypoints[] = {16,20,19,13,9,5};
+        uint N = 6;
+
 
 
     trajectory.resize(N);
@@ -81,9 +85,11 @@ bool Task::configureHook()
         trajectory.at(i).position = Eigen::Vector3d(xpos[ selectWaypoints[i] -1],ypos[ selectWaypoints[i] -1],0);
         trajectory.at(i).heading  = 0.0/180.0*M_PI;
         trajectory.at(i).tol_position = 0.1;
+        trajectory.at(i).tol_heading = 5.0/180*M_PI;
         ptrajectory.at(i) = &trajectory.at(i);
     }
-    trajectory.at(N-1).tol_heading = 5/180*M_PI;
+    trajectory.at(N-1).tol_heading =  3.0/180*M_PI;
+    trajectory.at(N-1).heading     =15.0/180.0*M_PI;
     std::cout << "Trajectory created" << std::endl;
     pathTracker->setTrajectory(ptrajectory);
     std::cout << "Trajectory set" << std::endl;
@@ -112,10 +118,13 @@ void Task::updateHook()
     {
 	// Get motion command
        base::commands::Motion2D mc;
+       mc.translation = 0; mc.rotation = 0;
+       /*
        if ( mc.translation != 0 || mc.rotation != 0){
            std::cout << "MC was not zeroed!" << std::endl;
            mc.translation = 0; mc.rotation = 0;
        }
+       */
        // If data are valid
        if (pathTracker->setPose(pose)){
            pathTracker->update(mc);
