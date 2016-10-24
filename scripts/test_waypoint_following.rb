@@ -16,7 +16,7 @@ ENV['LC_NUMERIC'] = 'C'
 
 Bundles.run 'waypoint_navigation::Task' => 'pathTracker',
             'waypoint_navigation::FollowingTest' => 'move',
-            "valgrind" => false,
+          "valgrind" => false,
             'output' => nil, 
             "wait" => 1000 					do
 
@@ -34,20 +34,22 @@ Bundles.run 'waypoint_navigation::Task' => 'pathTracker',
 
     pathTracker.motion_command.connect_to move.motion_command, :type => :buffer, :size => 10
     move.robot_pose.connect_to pathTracker.pose, :type => :buffer, :size => 10
-    
+
+    view3d = Vizkit.vizkit3d_widget
+    view3d.show
+    rbs_plugin = Vizkit.default_loader.RigidBodyStateVisualization
+  
    # Vizkit.display planner.trajectory
     # Vizkit.display move.start_pose, :widget => Vizkit.default_loader.RigidBodyStateVisualization
-    Vizkit.display move.robot_pose, :widget => Vizkit.default_loader.RigidBodyStateVisualization
+    Vizkit.display move.robot_pose, :widget => rbs_plugin
     Vizkit.display move.robot_pose, :widget => Vizkit.default_loader.TrajectoryVisualization
     Vizkit.display pathTracker.currentWaypoint, :widget => Vizkit.default_loader.WaypointVisualization
     
-     Readline::readline("Hit ENTER to start")    
+    Readline::readline("Hit ENTER to start")    
     
     pathTracker.start
     move.start
     Vizkit.exec    # Busy waiting
-
- 
 
     Readline::readline("Hit ENTER to stop")    
 end

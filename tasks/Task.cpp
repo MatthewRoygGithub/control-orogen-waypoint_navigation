@@ -26,65 +26,22 @@ bool Task::configureHook()
 		ptConfig.corridor,
 		ptConfig.lookaheadDistance));
 	trajectory.clear();
-
         std::cout << "Path Tracker configured using " <<
         pathTracker->getLookaheadDistance() << "m lookahead distance." << std::endl;
 
-        // Trajectory loop
-	//double xpos[] = {2.093,	 3.936,	 5.602,	 7.567,	7.483,	5.806, 4.405, 2.914, 1.208, 1.014, 1.305, 2.150};
-	//double ypos[] = {7.419,	 7.199,	 7.409,	 5.951,	3.926,	2.396, 1.069, 1.386, 0.978, 2.683, 4.224, 5.739};
-        // Trajectory 1
-        //double xpos[] = {5.806, 4.405, 2.914, 1.208, 1.014, 1.305, 2.150};
-	//double ypos[] = {2.396, 1.069, 1.386, 0.978, 2.683, 4.224, 5.739};
-        // Redone using indexing
-        double xpos[] = {2.093, 3.936, 5.602, 7.834, 2.150, 3.906, 5.843, 7.567, 0.705, 4.283, 5.741, 7.483, 1.014, 2.950, 4.300, 5.806, 7.227, 1.208, 2.914, 4.405, 7.051};
-        double ypos[] = {7.419, 7.199, 7.409, 7.899, 5.739, 5.781, 5.952, 5.951, 4.224, 4.015, 3.961, 3.926, 2.683, 2.549, 2.388, 2.396, 2.404, 0.978, 1.386, 1.069, 1.132};
-        
-        // Big loop
-        //uint selectWaypoints[] = {1, 2, 3, 8, 12, 16, 20, 19, 19, 13, 9, 5};
-        //uint N = 12;
-        // Small loop, worked well, point turn once at #13
-        //uint selectWaypoints[] = {5, 6, 11, 16, 20, 19, 13, 9, 5};
-        //uint N = 9;
-        // Double loop
-//        uint selectWaypoints[] = {5, 6, 11, 15, 14, 13, 9, 5, 6, 11, 15, 14, 13, 9, 5};
-  //      uint N = 15;
-        // Go home
-        //uint selectWaypoints[] = {16,20,19,13,9,5};
-        //uint N = 6;
-
-	// Simulation Trajectory
-        uint selectWaypoints[] = {1,2,3};
-        uint N = 3;
-	
-
-
-
-    trajectory.resize(N);
-    std::vector<base::Waypoint*> ptrajectory(N);
-    for (size_t i = 0; i < N; i++)
-    {
-        trajectory.at(i).position = Eigen::Vector3d(xpos[ selectWaypoints[i] -1],ypos[ selectWaypoints[i] -1],0);
-        trajectory.at(i).heading  = 0.0/180.0*M_PI;
-        trajectory.at(i).tol_position = 0.1;
-        trajectory.at(i).tol_heading = 5.0/180*M_PI;
-        ptrajectory.at(i) = &trajectory.at(i);
-    }
-    trajectory.at(N-1).tol_heading =  3.0/180*M_PI;
-    trajectory.at(N-1).heading     =15.0/180.0*M_PI;
-    std::cout << "Trajectory created" << std::endl;
-    pathTracker->setTrajectory(ptrajectory);
-    std::cout << "Trajectory set" << std::endl;
-    return true;
-
+  return true;
 }
 
 void Task::updateHook()
 {
-    if(_trajectory.readNewest(trajectory) != RTT::NoData) { // Trajectory input contains new data
+    std::cout << "Task::updateHook() called." << std::endl;
+    int rtt_return = _trajectory.readNewest(trajectory);  
+    if(rtt_return  == RTT::NewData ) { // Trajectory input contains new data
         //convert to driver format
-        std::cerr << "DTF: got " << trajectory.size() << " points in trajectory" << std::endl;
+        std::cout << "Task::updateHook(), Task has  "
+                  << trajectory.size() << " points in trajectory." << std::endl;
 
+        // Pass the waypoints to the library using pointers
         std::vector<base::Waypoint*> waypoints;
         for (std::vector<base::Waypoint>::const_iterator it = trajectory.begin();
                 it != trajectory.end(); ++it) // Iterate through trajectory received: [1st to Nth].
@@ -92,22 +49,21 @@ void Task::updateHook()
             waypoints.push_back(new base::Waypoint(*it)); // Add element to the end of the vector
         }
         pathTracker->setTrajectory(waypoints);
+        std::cout << "Task::updateHook(), Trajectory set to path tracker." << std::endl;
     }
 
      // Set pose if the trajectory is not empty and Pose contains data
     base::samples::RigidBodyState pose;
     if (!trajectory.empty() && _pose.readNewest(pose) != RTT::NoData)
     {
-	// Get motion command
+       // Create zero motion command
        base::commands::Motion2D mc;
        mc.translation = 0; mc.rotation = 0;
-       /*
-       if ( mc.translation != 0 || mc.rotation != 0){
-           std::cout << "MC was not zeroed!" << std::endl;
-           mc.translation = 0; mc.rotation = 0;
-       }
-       */
-       // If data are valid
+
+       std::cout << "Task::updateHook(), with xr = (" <<
+                pose.position(0) << ", "<< 
+                pose.position(1) << ")" << std::endl;
+      // If data are valid, calculate the motion command
        if (pathTracker->setPose(pose)){
            pathTracker->update(mc);
        }

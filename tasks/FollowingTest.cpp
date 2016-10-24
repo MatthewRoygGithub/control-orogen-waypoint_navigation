@@ -30,34 +30,45 @@ bool FollowingTest::configureHook()
 {
     if (! FollowingTestBase::configureHook())
         return false;
-	mStartPose = _start_pose.value();
-	mStartPoseReceived = true;
-	mCurrentPose = mStartPose;
-        std::cout << "Config of robot pose done!" << std::endl;
-	std::cout << "Robot = (" << mCurrentPose.position.x() <<","
+    // Set upo robot pose based on config values
+    base::Vector2d position2d = _start_position.value();
+        
+    mStartPose.position    = Eigen::Vector3d(position2d(0),position2d(1),0);
+    mStartPose.orientation = Eigen::Quaterniond(
+                     Eigen::AngleAxisd(_start_heading.value()/180.0*M_PI, Eigen::Vector3d::UnitZ()));
+    
+    mStartPoseReceived = true;
+    mCurrentPose = mStartPose;
+    std::cout << "Config of robot pose done!" << std::endl;
+    std::cout << "Robot = (" << mCurrentPose.position.x() <<","
                 << mCurrentPose.position.y() <<","
                 << mCurrentPose.position.z() <<"), "
                 << "yaw = "<<  mCurrentPose.getYaw()*180/M_PI << " deg."
-                << std::endl << std::endl;
+                << std::endl;
     return true;
 }
 bool FollowingTest::startHook()
 {
+    std::cout <<  "FollowingTask::startHook() called. " << std::endl;
     if (! FollowingTestBase::startHook())
         return false;
-    _robot_pose.write(mCurrentPose);	
+    // _robot_pose.write(mCurrentPose);
+    mTimeStart = base::Time::now();
+    std::cout <<  "FollowingTask::startHook() t = " << mTimeStart.toSeconds() << std::endl;
     return true;
 }
 
 void FollowingTest::updateHook()
 {
+    std::cout << "FollowingTask::updateHook() called. " << std::endl;  
     FollowingTestBase::updateHook();
-	// MOTION SIMULATION HERE -------------------------------------
-	
+    // MOTION SIMULATION HERE -------------------------------------
+    
     if(!mStartPoseReceived) {
         return;
+        std::cout << "FollowingTask::updateHook() start pose not received." << std::endl;
     }
-    
+
     base::commands::Motion2D mc;
     if(_motion_command.readNewest(mc) == RTT::NewData) { 
         base::Time time_now = base::Time::now();
@@ -71,14 +82,13 @@ void FollowingTest::updateHook()
          
         mTimeStart = time_now;
 
-
 	double dt = time_sec;;
         double yaw = mCurrentPose.getYaw();
         
 	Eigen::AngleAxisd toWCF, robotRot;
         toWCF = Eigen::AngleAxisd(yaw, Eigen::Vector3d::UnitZ());
 
-
+      std::cout << "FollowingTask::updateHook() simulating the motion with dt = " << dt << std::endl;  
       if ( fabs(mc.translation) < 0.000001 ){
         // Point turn
         //std::cout << "PT of " << (mc.rotation*dt)*180/M_PI << "deg" << std::endl;
@@ -98,18 +108,18 @@ void FollowingTest::updateHook()
         mCurrentPose.position    = robotRot*(mCurrentPose.position - turnCenter) + turnCenter;
         mCurrentPose.orientation = Eigen::Quaterniond(robotRot)*mCurrentPose.orientation;
       }
-
-      	std::cout << "Robot = (" << mCurrentPose.position.x() <<","
+    }
+    // END OF MOTION SIMULATION ---------------------------------------------------------
+    std::cout << "Robot = (" << mCurrentPose.position.x() <<","
                 << mCurrentPose.position.y() <<","
                 << mCurrentPose.position.z() <<"), "
                 << "yaw = "<<  mCurrentPose.getYaw()*180/M_PI << " deg."
-                << std::endl << std::endl;
-           
-        _robot_pose.write(mCurrentPose);
-	}
-	//-------------------------------------------------------------
+                << std::endl;
+    _robot_pose.write(mCurrentPose);
+    std::cout << "FollowingTask::updateHook() updated pose written out. " << std::endl;  
 
 }
+
 void FollowingTest::errorHook()
 {
     FollowingTestBase::errorHook();
