@@ -60,13 +60,23 @@ bool FollowingTest::startHook()
 
 void FollowingTest::updateHook()
 {
-    std::cout << "FollowingTask::updateHook() called. " << std::endl;  
+	//std::cout << "FollowingTask::updateHook() called. " << std::endl;  
     FollowingTestBase::updateHook();
     // MOTION SIMULATION HERE -------------------------------------
     
     if(!mStartPoseReceived) {
         return;
         std::cout << "FollowingTask::updateHook() start pose not received." << std::endl;
+    }
+    base::samples::RigidBodyState newPose;
+    int rttPortState = _start_pose.readNewest(newPose);
+    if( rttPortState == RTT::NewData &&
+        rttPortState != RTT::NoData ) {
+        mCurrentPose = newPose;
+        std::cout << "FollowingTest::updateHook(): new pose received, written out." <<
+        std::endl;
+        _robot_pose.write(mCurrentPose);
+        return; // No new motion simulation         
     }
 
     base::commands::Motion2D mc;
@@ -110,14 +120,15 @@ void FollowingTest::updateHook()
       }
     }
     // END OF MOTION SIMULATION ---------------------------------------------------------
+    /*
     std::cout << "Robot = (" << mCurrentPose.position.x() <<","
                 << mCurrentPose.position.y() <<","
                 << mCurrentPose.position.z() <<"), "
                 << "yaw = "<<  mCurrentPose.getYaw()*180/M_PI << " deg."
                 << std::endl;
-    _robot_pose.write(mCurrentPose);
     std::cout << "FollowingTask::updateHook() updated pose written out. " << std::endl;  
-
+	*/
+	_robot_pose.write(mCurrentPose);
 }
 
 void FollowingTest::errorHook()
