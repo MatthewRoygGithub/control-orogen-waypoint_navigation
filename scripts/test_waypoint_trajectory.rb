@@ -29,12 +29,15 @@ Bundles.run 'waypoint_navigation::Task'          => 'pathTracker',
     trajectoryGen.apply_conf_file("config/waypoint_navigation::TrajectoryTest.yml", ["short"])
 
     pathTracker.configure
-    pathTracker.start
- 
-    move.configure
-    move.start
- 
     trajectoryGen.configure
+    move.configure
+
+    trajectoryGen.trajectory.connect_to         pathTracker.trajectory, :type => :buffer, :size => 1
+    pathTracker.motion_command.connect_to       move.motion_command,    :type => :buffer, :size => 5
+    move.robot_pose.connect_to                  pathTracker.pose,       :type => :buffer, :size => 5
+
+    pathTracker.start
+    move.start  
     trajectoryGen.start
 
     view3d = Vizkit.vizkit3d_widget
@@ -48,10 +51,6 @@ Bundles.run 'waypoint_navigation::Task'          => 'pathTracker',
 
 #   Readline::readline("Hit ENTER to start")    
     
-    trajectoryGen.trajectory.connect_to         pathTracker.trajectory, :type => :buffer, :size => 10
-    pathTracker.motion_command.connect_to       move.motion_command,    :type => :buffer, :size => 10
-    move.robot_pose.connect_to                  pathTracker.pose,       :type => :buffer, :size => 10
-
     trajectoryGen.trigger 
  
     Vizkit.exec    # Busy waiting
