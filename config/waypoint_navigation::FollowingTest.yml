@@ -1,0 +1,8 @@
+--- name:default
+# Initial heading of the robot in degrees
+start_heading: 0.0
+# (X,Y) initial position of the robot
+start_position:
+  data:
+  - 1.0
+  - 6.0
