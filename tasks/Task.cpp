@@ -35,11 +35,8 @@ bool Task::configureHook()
 
 void Task::updateHook()
 {
-    int rtt_return;
-
     // -------------------  TRAJECTORY SETTING   ---------------
-    rtt_return = _trajectory.readNewest(trajectory);  
-    if(rtt_return  == RTT::NewData ) { // Trajectory input contains new data
+    if(_trajectory.readNewest(trajectory) == RTT::NewData ) { // Trajectory input contains new data
         //convert to driver format
         std::cout << "Task::updateHook(), Task has  "
                   << trajectory.size() << " points in trajectory." << std::endl;
@@ -58,8 +55,7 @@ void Task::updateHook()
 
     // -------------------   NEW POSE READING   ----------------
     base::samples::RigidBodyState pose;
-    rtt_return = _pose.readNewest(pose);
-    if (rtt_return != RTT::NoData ){
+    if (_pose.readNewest(pose) != RTT::NoData ){
         positionValid = pathTracker->setPose(pose);
     }
     
@@ -71,13 +67,16 @@ void Task::updateHook()
     mc.translation = 0; mc.rotation = 0;
 
     // -------------------   MOTION UPDATE      ----------------    
-    if (!trajectory.empty() && rtt_return == RTT::NewData ){
+    if (!trajectory.empty() && positionValid ){
         // If position data are valid, calculate the motion command
-        if (positionValid){
-           pathTracker->update(mc);
-        }
-        
-        // Propagate the Path Tracker state from the library to the component
+        pathTracker->update(mc);
+        // Write lookahead point to the output (only if there is the trajectory)
+        _currentWaypoint.write(*(pathTracker->getLookaheadPoint()));
+    }
+    // Write motion command to the ouput
+    _motion_command.write(mc);
+
+    //-------------- State Update from the library to the component
         waypoint_navigation_lib::NavigationState curentState = pathTracker->getNavigationState();
         switch(curentState) {
             case waypoint_navigation_lib::DRIVING:{
@@ -100,11 +99,7 @@ void Task::updateHook()
                 break;
             }
         }
-        // Write lookahead point to the output (only if there is the trajectory)
-        _currentWaypoint.write(*(pathTracker->getLookaheadPoint()));
-    }
-    // Write motion command to the ouput
-   _motion_command.write(mc);
+
 }
 
 void Task::cleanupHook()

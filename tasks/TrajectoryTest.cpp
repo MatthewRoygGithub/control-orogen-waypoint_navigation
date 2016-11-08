@@ -48,7 +48,7 @@ bool TrajectoryTest::configureHook()
             // TODO add those in config file!
             trajectory.at(it).tol_position = 0.1;
             trajectory.at(it).tol_heading  = 3.0/180*M_PI; 
-            trajectory.at(it).heading  = 45.0/180*M_PI;
+            trajectory.at(it).heading  = 0.0/180*M_PI;
         }
     }
    std::cout << "TrajectoryTest::configureHook(), Trajectory created." << std::endl;
