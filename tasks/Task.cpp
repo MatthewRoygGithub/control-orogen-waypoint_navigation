@@ -19,13 +19,13 @@ bool Task::configureHook()
       		return false;
 	pathTrackerConfig ptConfig = _ptConfig.value();
 	pathTracker = new waypoint_navigation_lib::WaypointNavigation();
-    
     assert(	pathTracker->configure(
 		ptConfig.minTurnRadius,
 		ptConfig.translationalVelocity,
 		ptConfig.rotationalVelocity,
 		ptConfig.corridor,
 		ptConfig.lookaheadDistance));
+    positionValid = false;
 	trajectory.clear();
 	std::cout << "Path Tracker configured using " <<
     pathTracker->getLookaheadDistance() << "m lookahead distance." << std::endl;
@@ -35,14 +35,16 @@ bool Task::configureHook()
 
 void Task::updateHook()
 {
-    /* std::cout << "Task::updateHook() called." << std::endl; */
-    int rtt_return = _trajectory.readNewest(trajectory);  
+    int rtt_return;
+
+    // -------------------  TRAJECTORY SETTING   ---------------
+    rtt_return = _trajectory.readNewest(trajectory);  
     if(rtt_return  == RTT::NewData ) { // Trajectory input contains new data
         //convert to driver format
         std::cout << "Task::updateHook(), Task has  "
                   << trajectory.size() << " points in trajectory." << std::endl;
         
-		// Pass the waypoints to the library using pointers
+		    // Pass the waypoints to the library using pointers
         std::vector<base::Waypoint*> waypoints;
         for (std::vector<base::Waypoint>::const_iterator it = trajectory.begin();
                 it != trajectory.end(); ++it) // Iterate through trajectory received: [1st to Nth].
@@ -54,49 +56,55 @@ void Task::updateHook()
                   << std::endl;
     }
 
-     // Set pose if the trajectory is not empty and Pose contains data
+    // -------------------   NEW POSE READING   ----------------
     base::samples::RigidBodyState pose;
-    if (!trajectory.empty() && _pose.readNewest(pose) != RTT::NoData)
-    {
-       // Create zero motion command
-       base::commands::Motion2D mc;
-       mc.translation = 0; mc.rotation = 0;
+    rtt_return = _pose.readNewest(pose);
+    if (rtt_return != RTT::NoData ){
+        positionValid = pathTracker->setPose(pose);
+    }
+    
+    std::cout << "Task::updateHook(), with xr = (" <<
+        pose.position(0) << ", "<< 
+        pose.position(1) << ")" << std::endl;
+    // Create zero motion command
+    base::commands::Motion2D mc;
+    mc.translation = 0; mc.rotation = 0;
 
-       std::cout << "Task::updateHook(), with xr = (" <<
-                pose.position(0) << ", "<< 
-                pose.position(1) << ")" << std::endl;
-      // If data are valid, calculate the motion command
-       if (pathTracker->setPose(pose)){
+    // -------------------   MOTION UPDATE      ----------------    
+    if (!trajectory.empty() && rtt_return == RTT::NewData ){
+        // If position data are valid, calculate the motion command
+        if (positionValid){
            pathTracker->update(mc);
-       }
-
-      // Propagate the Path Tracker state from the library to the component
-      waypoint_navigation_lib::NavigationState curentState = pathTracker->getNavigationState();
-      switch(curentState) {
-          case waypoint_navigation_lib::DRIVING:{
-            state(DRIVING);
-            break;
-          }
-          case waypoint_navigation_lib::ALIGNING:{
-            state(ALIGNING);
-            break;
-          }
-          case waypoint_navigation_lib::TARGET_REACHED:{
-            state(TARGET_REACHED);
-            break;
-          }
-          case waypoint_navigation_lib::OUT_OF_BOUNDARIES:{
-            state(OUT_OF_BOUNDARIES);
-            break;
-          }
-          default:{
-            break;
-          }
-      }
-      // WRITE TO OUTPUTS
-      _currentWaypoint.write(*(pathTracker->getLookaheadPoint()));
-      _motion_command.write(mc);
-  }
+        }
+        
+        // Propagate the Path Tracker state from the library to the component
+        waypoint_navigation_lib::NavigationState curentState = pathTracker->getNavigationState();
+        switch(curentState) {
+            case waypoint_navigation_lib::DRIVING:{
+                state(DRIVING);
+                break;
+            }
+            case waypoint_navigation_lib::ALIGNING:{
+                state(ALIGNING);
+                break;
+            }
+            case waypoint_navigation_lib::TARGET_REACHED:{
+                state(TARGET_REACHED);
+                break;
+            }
+            case waypoint_navigation_lib::OUT_OF_BOUNDARIES:{
+                state(OUT_OF_BOUNDARIES);
+                break;
+            }
+            default:{
+                break;
+            }
+        }
+        // Write lookahead point to the output (only if there is the trajectory)
+        _currentWaypoint.write(*(pathTracker->getLookaheadPoint()));
+    }
+    // Write motion command to the ouput
+   _motion_command.write(mc);
 }
 
 void Task::cleanupHook()
