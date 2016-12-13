@@ -89,7 +89,9 @@ void Task::updateHook()
             }
             case waypoint_navigation_lib::TARGET_REACHED:{
                 state(TARGET_REACHED);
-                break;
+                mc.translation = 0.00001; 
+                _motion_command.write(mc);
+                 break;
             }
             case waypoint_navigation_lib::OUT_OF_BOUNDARIES:{
                 state(OUT_OF_BOUNDARIES);
