@@ -14,7 +14,8 @@ namespace waypoint_navigation {
         std::vector<int> mSelectedWaypoints;
         std::vector<base::Waypoint> trajectory; 
         bool waypointsConfigured;
-
+        // Predefined grid of waypoints marekd in the lab environment
+        std::vector<double> xpos, ypos;
 
     public:
         TrajectoryTest(std::string const& name = "waypoint_navigation::TrajectoryTest");

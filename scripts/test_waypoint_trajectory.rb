@@ -19,14 +19,14 @@ Bundles.run 'waypoint_navigation::Task'          => 'pathTracker',
             'output' => nil, 
             "wait" => 60 					do
 
-    pathTracker = TaskContext::get 'pathTracker'
-    move        = TaskContext::get 'move'
+    pathTracker   = TaskContext::get 'pathTracker'
+    move          = TaskContext::get 'move'
     trajectoryGen = TaskContext::get 'trajectoryGen'
 
     # load property from configuration file
     pathTracker.apply_conf_file("config/waypoint_navigation::Task.yml",   ["exoter"])
     move.apply_conf_file("config/waypoint_navigation::FollowingTest.yml", ["default"])
-    trajectoryGen.apply_conf_file("config/waypoint_navigation::TrajectoryTest.yml", ["short"])
+    trajectoryGen.apply_conf_file("config/waypoint_navigation::TrajectoryTest.yml", ["short","prl"])
 
     pathTracker.configure
     trajectoryGen.configure

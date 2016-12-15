@@ -27,9 +27,36 @@ bool TrajectoryTest::configureHook()
     int N = mSelectedWaypoints.size();
     trajectory.resize(N);
 
-    // Predefined grid of waypoints marekd in the lab environment
-    double xpos[] = {2.093, 3.936, 5.602, 7.834, 2.150, 3.906, 5.843, 7.567, 0.705, 4.283, 5.741, 7.483, 1.014, 2.950, 4.300, 5.806, 7.227, 1.208, 2.914, 4.405, 7.051};
-    double ypos[] = {7.419, 7.199, 7.409, 7.899, 5.739, 5.781, 5.952, 5.951, 4.224, 4.015, 3.961, 3.926, 2.683, 2.549, 2.388, 2.396, 2.404, 0.978, 1.386, 1.069, 1.132};
+    xpos = _xpos.get();
+    ypos = _ypos.get();
+
+	// Sizes of available waypoint lists are consistent
+    if ( xpos.size() != ypos.size()){
+    	std::cerr << "\nError in TrajectoryTest::configureHook()\n" 
+    			<< "xpos size ("<< xpos.size() << ") does not match ypos ("<< ypos.size() << ") size!\n" 
+    			<< "Check config/waypoint_navigation::TrajectoryTest.yml.\n"
+    			<< std::endl;
+    	return false;
+    }
+    std::vector<int>::iterator result;
+
+    // Selected waypoints indexes are valid:
+    result = std::max_element(mSelectedWaypoints.begin(), mSelectedWaypoints.end());
+    if ( *result > xpos.size() ){
+    	std::cerr << "\nError in TrajectoryTest::configureHook()\n"
+    			<< "Index: " << *result << " exceeds the number of available waypoints (" << xpos.size() << ").\n"
+    			<< "Check selectedWaypoints in config/waypoint_navigation::TrajectoryTest.yml.\n" 
+    			<< std::endl;
+    	return false;
+    }
+    result = std::min_element(mSelectedWaypoints.begin(), mSelectedWaypoints.end());
+    if ( *result < 1 ){
+    	std::cerr << "\nError in TrajectoryTest::configureHook()\n" 
+    			<< "Index: " << *result << " is under the limit, must be >0.\n"
+    			<< "Check selectedWaypoints in config/waypoint_navigation::TrajectoryTest.yml.\n" 
+    			<< std::endl;
+    	return false;
+    }
 
     // Now iteratively set the trajectory so that each previous waypoints has a heading towards the next waypoint.
     int it;
@@ -48,7 +75,7 @@ bool TrajectoryTest::configureHook()
             // TODO add those in config file!
             trajectory.at(it).tol_position = 0.1;
             trajectory.at(it).tol_heading  = 3.0/180.0*M_PI; 
-            trajectory.at(it).heading      = -90.0/180.0*M_PI;
+            trajectory.at(it).heading      = (_goal_heading.get())/180.0*M_PI;
         }
     }
    std::cout << "TrajectoryTest::configureHook(), Trajectory created." << std::endl;
@@ -59,7 +86,7 @@ bool TrajectoryTest::startHook()
 {
     if (! TrajectoryTestBase::startHook())
         return false;
-    std::cout << "TrajectoryTest::startHook called" << std::cout; 
+//    std::cout << "TrajectoryTest::startHook called" << std::cout; 
 //     _trajectory.write(trajectory); 
 //    std::cout << "Trajectory written out." << std::cout;
     return true;

@@ -52,9 +52,20 @@ end
 task_context "TrajectoryTest"do
     needs_configuration
 
+    # Properties
     property("selectedWaypoints","/std/vector</int>").
     doc "List containing indexes of selected waypoints"
 
+    property("xpos","/std/vector</double>").
+    doc "Lists containing x-coordinates of available waypoints"
+    
+    property("ypos","/std/vector</double>").
+    doc "Lists containing y-coordinates of available waypoints"
+
+    property("goal_heading","double").
+    doc "Goal heading of the robot in degrees"
+    
+    # Output
     output_port("trajectory", "/std/vector</base/Waypoint>").
     doc "Trajectory the robot should follow"
      
