@@ -7,6 +7,8 @@ ptConfig:
   corridor: 0.2
   maxDisalignment: 0.15
   lookaheadDistance: 0.60
+  backwards: false
+  
 
 --- name:exoter
 # Configuration of Path Tracker parameters, namely distances, velocities and turn radius
@@ -17,3 +19,5 @@ ptConfig:
   corridor: 0.2
   maxDisalignment: 0.15
   lookaheadDistance: 0.50
+  backwards: false
+

@@ -24,7 +24,8 @@ bool Task::configureHook()
 		ptConfig.translationalVelocity,
 		ptConfig.rotationalVelocity,
 		ptConfig.corridor,
-		ptConfig.lookaheadDistance));
+		ptConfig.lookaheadDistance,
+        ptConfig.backwards));
     positionValid = false;
 	trajectory.clear();
 	std::cout << "Path Tracker configured using " <<
@@ -41,7 +42,7 @@ void Task::updateHook()
         std::cout << "Task::updateHook(), Task has  "
                   << trajectory.size() << " points in trajectory." << std::endl;
         
-		    // Pass the waypoints to the library using pointers
+		// Pass the waypoints to the library using pointers
         std::vector<base::Waypoint*> waypoints;
         for (std::vector<base::Waypoint>::const_iterator it = trajectory.begin();
                 it != trajectory.end(); ++it) // Iterate through trajectory received: [1st to Nth].
@@ -95,6 +96,10 @@ void Task::updateHook()
             }
             case waypoint_navigation_lib::OUT_OF_BOUNDARIES:{
                 state(OUT_OF_BOUNDARIES);
+                break;
+            }
+            case waypoint_navigation_lib::NO_TRAJECTORY:{
+                state(NO_TRAJECTORY);
                 break;
             }
             default:{

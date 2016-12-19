@@ -22,7 +22,7 @@ task_context "Task" do
     output_port("currentWaypoint", "base/Waypoint").
         doc "the waypoint towards which we are currently going"
 
-    runtime_states :DRIVING, :ALIGNING, :TARGET_REACHED, :OUT_OF_BOUNDARIES
+    runtime_states :DRIVING, :ALIGNING, :TARGET_REACHED, :OUT_OF_BOUNDARIES, :NO_TRAJECTORY
 
     needs_configuration
     port_driven
@@ -46,7 +46,7 @@ task_context "FollowingTest" do
     output_port("robot_pose", "/base/samples/RigidBodyState").
         doc("Moved robot pose")
         
-    periodic 0.01
+    periodic 1
 end
 
 task_context "TrajectoryTest"do

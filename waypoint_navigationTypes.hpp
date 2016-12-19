@@ -25,6 +25,9 @@ namespace waypoint_navigation {
 		
 		// Distance to the lookahead point of the Pure Pursuit Algorithm (m)
 		double lookaheadDistance;	
+
+		// Is backward motion permitted? true/false
+		bool backwards;	
     };
     
 	
