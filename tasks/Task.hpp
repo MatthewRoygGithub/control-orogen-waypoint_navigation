@@ -1,3 +1,26 @@
+/****************************************************************
+ *
+ * Copyright (c) 2016
+ *
+ * European Space Technology and Research Center
+ * ESTEC - European Space Agency
+ *
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ *
+ * Description: Class encapsulating the pure-pursuit based path 
+ * follower, which was implemented for the six-wheeled ExoTeR rover.
+ *
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ *
+ * Author: Jan Filip, email:jan.filip@esa.int, jan.filip2@gmail.com
+ * Supervised by: Martin Azkarate, email:martin.azkarate@esa.int
+ *
+ * Date of creation: Dec 2016
+ *
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ */
+
+
 #ifndef WAYPOINT_NAVIGATION_TASK_TASK_HPP
 #define WAYPOINT_NAVIGATION_TASK_TASK_HPP
 

@@ -1,4 +1,23 @@
-/* Generated from orogen/lib/orogen/templates/tasks/Task.hpp */
+/****************************************************************
+ *
+ * Copyright (c) 2016
+ *
+ * European Space Technology and Research Center
+ * ESTEC - European Space Agency
+ *
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ *
+ * Description: Class for generation of test path (list of Waypoints)
+ *
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ *
+ * Author: Jan Filip, email:jan.filip@esa.int, jan.filip2@gmail.com
+ * Supervised by: Martin Azkarate, email:martin.azkarate@esa.int
+ *
+ * Date of creation: Dec 2016
+ *
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ */
 
 #ifndef WAYPOINT_NAVIGATION_TRAJECTORYTEST_TASK_HPP
 #define WAYPOINT_NAVIGATION_TRAJECTORYTEST_TASK_HPP
