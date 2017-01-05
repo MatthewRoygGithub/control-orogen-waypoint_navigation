@@ -9,6 +9,8 @@ import_types_from "base"
 task_context "Task" do
     property('ptConfig', 'waypoint_navigation/pathTrackerConfig').
         doc 'Configuration of Path Tracker parameters, namely distances, velocities and turn radius'
+    property('pdConfig', 'waypoint_navigation/controllerPDConfig').
+        doc 'Configuration of PD alignment controller'
 
     input_port("trajectory", "/std/vector</base/Waypoint>").
         doc "Trajectory the robot should follow"

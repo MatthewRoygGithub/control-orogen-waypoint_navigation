@@ -29,6 +29,14 @@ namespace waypoint_navigation {
 		// Is backward motion permitted? true/false
 		bool backwards;	
     };
+    struct controllerPDConfig
+	{	
+		// Paramater							
+		//-----------------------------------------------------------------------
+		double P;
+		double D;
+		double saturation; // Input disalignment error saturation
+    };
     
 	
 	

@@ -35,3 +35,12 @@ xpos: [2.093, 3.936, 5.602, 7.834, 2.150, 3.906, 5.843, 7.567, 0.705, 4.283, 5.7
 # Lists containing y-coordinates of available waypoints
 ypos: [7.419, 7.199, 7.409, 7.899, 5.739, 5.781, 5.952, 5.951, 4.224, 4.015, 3.961, 3.926, 2.683, 2.549, 2.388, 2.396, 2.404, 0.978, 1.386, 1.069, 1.132]
 
+
+# TESTING
+--- name:testing
+selectedWaypoints: [2]
+goal_heading: 00.0
+# Lists containing x-coordinates of available waypoints
+xpos: [1, 2, 3, 4, 5]
+# Lists containing y-coordinates of available waypoints
+ypos: [1, 1, 1, 1, 1]

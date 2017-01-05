@@ -2,12 +2,17 @@
 # Configuration of Path Tracker parameters, namely distances, velocities and turn radius
 ptConfig:
   minTurnRadius: 0.6
-  translationalVelocity: 0.05
-  rotationalVelocity: 0.15
+  translationalVelocity: 0.08
+  rotationalVelocity: 0.2094
   corridor: 0.2
   maxDisalignment: 0.15
   lookaheadDistance: 0.60
   backwards: false
+
+pdConfig:
+  P: 0.5
+  D: 0.375
+  saturation: 0.3491
   
 
 --- name:exoter

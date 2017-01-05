@@ -25,7 +25,7 @@ Bundles.run 'waypoint_navigation::Task' => 'pathTracker',
 
     # load property from configuration file
     pathTracker.apply_conf_file("config/waypoint_navigation::Task.yml", 
-        ["exoter"])
+        ["default"])
     move.apply_conf_file("config/waypoint_navigation::FollowingTest.yml", 
         ["default"])
 
