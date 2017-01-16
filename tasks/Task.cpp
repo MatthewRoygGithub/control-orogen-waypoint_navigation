@@ -104,15 +104,10 @@ void Task::updateHook()
     } else {
         pathTracker->setNavigationState(waypoint_navigation_lib::NO_POSE);
     }
-    // Write motion command to the ouput if different from previous
-    if(mc.translation != mc_prev.translation || mc.rotation != mc_prev.rotation ){
-        _motion_command.write(mc);
-        mc_prev = mc;
-    }    
-
+    
     //-------------- State Update from the library to the component
-        waypoint_navigation_lib::NavigationState curentState = pathTracker->getNavigationState();
-        switch(curentState) {
+    waypoint_navigation_lib::NavigationState curentState = pathTracker->getNavigationState();
+    switch(curentState) {
             case waypoint_navigation_lib::DRIVING:{
                 state(DRIVING);
                 break;
@@ -124,8 +119,7 @@ void Task::updateHook()
             case waypoint_navigation_lib::TARGET_REACHED:{
                 state(TARGET_REACHED);
                 mc.translation = 0.00001; 
-                _motion_command.write(mc);
-                 break;
+                break;
             }
             case waypoint_navigation_lib::OUT_OF_BOUNDARIES:{
                 state(OUT_OF_BOUNDARIES);
@@ -143,6 +137,12 @@ void Task::updateHook()
                 break;
             }
         }
+
+    // Write motion command to the ouput if different from previous
+    if(mc.translation != mc_prev.translation || mc.rotation != mc_prev.rotation ){
+        _motion_command.write(mc);
+        mc_prev = mc;
+    }    
 
 }
 
