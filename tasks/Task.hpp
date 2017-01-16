@@ -40,6 +40,7 @@ namespace waypoint_navigation {
 	waypoint_navigation_lib::WaypointNavigation *pathTracker;
 	///Trajectory in the format of the driver
 	std::vector<base::Waypoint> trajectory;
+    base::commands::Motion2D mc_prev;
     bool positionValid;
 	
     public:

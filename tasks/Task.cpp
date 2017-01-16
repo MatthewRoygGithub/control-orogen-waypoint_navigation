@@ -55,6 +55,9 @@ bool Task::configureHook()
 
     positionValid = false;
 	trajectory.clear();
+    
+    mc_prev.translation = 0; mc_prev.rotation = 0;
+
 	std::cout << "Path Tracker configured using " <<
     pathTracker->getLookaheadDistance() << "m lookahead distance." << std::endl;
 
@@ -66,7 +69,7 @@ void Task::updateHook()
     // -------------------  TRAJECTORY SETTING   ---------------
     if(_trajectory.readNewest(trajectory) == RTT::NewData ) { // Trajectory input contains new data
         //convert to driver format
-        std::cout << "Task::updateHook(), Task has  "
+        std::cout << "WaypointNavigation::updateHook(), Task has  "
                   << trajectory.size() << " points in trajectory." << std::endl;
         
 		// Pass the waypoints to the library using pointers
@@ -77,7 +80,7 @@ void Task::updateHook()
             waypoints.push_back(new base::Waypoint(*it)); // Add element to the end of the vector
         }
 		pathTracker->setTrajectory(waypoints);
-        std::cout << "Task::updateHook(), Trajectory set to path tracker." 
+        std::cout << "WaypointNavigation::updateHook(), Trajectory set to path tracker." 
                   << std::endl;
     }
 
@@ -87,22 +90,25 @@ void Task::updateHook()
         positionValid = pathTracker->setPose(pose);
     }
     
-    std::cout << "Task::updateHook(), with xr = (" <<
-        pose.position(0) << ", "<< 
-        pose.position(1) << ")" << std::endl;
+    // -------------------   MOTION UPDATE      ----------------    
     // Create zero motion command
     base::commands::Motion2D mc;
-    mc.translation = 0; mc.rotation = 0;
-
-    // -------------------   MOTION UPDATE      ----------------    
+    mc.translation = 0.0; mc.rotation = 0.0;
     if (!trajectory.empty() && positionValid ){
         // If position data are valid, calculate the motion command
         pathTracker->update(mc);
         // Write lookahead point to the output (only if there is the trajectory)
         _currentWaypoint.write(*(pathTracker->getLookaheadPoint()));
+    } else if (positionValid) {
+        pathTracker->setNavigationState(waypoint_navigation_lib::NO_TRAJECTORY);
+    } else {
+        pathTracker->setNavigationState(waypoint_navigation_lib::NO_POSE);
     }
-    // Write motion command to the ouput
-    _motion_command.write(mc);
+    // Write motion command to the ouput if different from previous
+    if(mc.translation != mc_prev.translation || mc.rotation != mc_prev.rotation ){
+        _motion_command.write(mc);
+        mc_prev = mc;
+    }    
 
     //-------------- State Update from the library to the component
         waypoint_navigation_lib::NavigationState curentState = pathTracker->getNavigationState();
@@ -127,6 +133,10 @@ void Task::updateHook()
             }
             case waypoint_navigation_lib::NO_TRAJECTORY:{
                 state(NO_TRAJECTORY);
+                break;
+            }
+            case waypoint_navigation_lib::NO_POSE:{
+                state(NO_POSE);
                 break;
             }
             default:{
