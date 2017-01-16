@@ -13,7 +13,11 @@ pdConfig:
   P: 0.5
   D: 0.375
   saturation: 0.3491
-  
+
+# Default goal heading tolerance (deg).
+tolHeading: 3
+# Default distance from the goal position tolerance (m).
+tolPos:     0.075
 
 --- name:exoter
 # Configuration of Path Tracker parameters, namely distances, velocities and turn radius

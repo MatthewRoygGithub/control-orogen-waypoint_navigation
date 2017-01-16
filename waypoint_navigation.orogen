@@ -11,6 +11,10 @@ task_context "Task" do
         doc 'Configuration of Path Tracker parameters, namely distances, velocities and turn radius'
     property('pdConfig', 'waypoint_navigation/controllerPDConfig').
         doc 'Configuration of PD alignment controller'
+    property('tolHeading', 'double').
+        doc 'Default goal heading tolerance (deg).'
+    property('tolPos', 'double').
+        doc 'Default distance from the goal position tolerance (m).'
 
     input_port("trajectory", "/std/vector</base/Waypoint>").
         doc "Trajectory the robot should follow"

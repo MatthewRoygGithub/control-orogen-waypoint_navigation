@@ -49,9 +49,10 @@ bool Task::configureHook()
 		ptConfig.corridor,
 		ptConfig.lookaheadDistance,
         ptConfig.backwards));
-
     controllerPDConfig pd = _pdConfig.value();
     pathTracker->configurePD(pd.P, pd.D, pd.saturation);
+    pathTracker->configureTol(_tolPos.value(), _tolHeading.value()*M_PI/180.0);
+
     positionValid = false;
 	trajectory.clear();
 	std::cout << "Path Tracker configured using " <<
