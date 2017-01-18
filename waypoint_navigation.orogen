@@ -28,6 +28,10 @@ task_context "Task" do
     output_port("currentWaypoint", "base/Waypoint").
         doc "the waypoint towards which we are currently going"
 
+    output_port("trajectory_status", "int").
+        doc "reports the state of the trajectory in execution"
+
+
     runtime_states :DRIVING, :ALIGNING, :TARGET_REACHED, :OUT_OF_BOUNDARIES, :NO_TRAJECTORY, :NO_POSE
 
     needs_configuration
