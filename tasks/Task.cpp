@@ -58,9 +58,6 @@ bool Task::configureHook()
     
     mc_prev.translation = 0; mc_prev.rotation = 0;
 
-	std::cout << "Path Tracker configured using " <<
-    pathTracker->getLookaheadDistance() << "m lookahead distance." << std::endl;
-
   return true;
 }
 
@@ -146,13 +143,31 @@ void Task::updateHook()
 
 }
 
+void Task::errorHook(){
+	stopRover();
+}
+
+void Task::stopHook(){
+	stopRover();
+}
+  
+
 void Task::cleanupHook()
 {
     TaskBase::cleanupHook();
-
     delete pathTracker;
 }
 
+void Task::stopRover(){
+	base::commands::Motion2D mc;
+    mc.translation = 0.0; mc.rotation = 0.0;
+    if( mc.translation != mc_prev.translation || 
+    	mc.rotation    != mc_prev.rotation )
+    {
+        _motion_command.write(mc);
+        mc_prev = mc;
+    }    
+}
 /*
 void Task::preprocessPath(std::vector<base::Waypoint*>& waypoints){
 	// Add all waypoints to the path

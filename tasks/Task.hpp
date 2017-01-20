@@ -24,6 +24,7 @@
 #ifndef WAYPOINT_NAVIGATION_TASK_TASK_HPP
 #define WAYPOINT_NAVIGATION_TASK_TASK_HPP
 
+
 #include "waypoint_navigation/TaskBase.hpp"
 #include <base/waypoint.h>
 
@@ -45,14 +46,14 @@ namespace waypoint_navigation {
 	
     public:
         Task(std::string const& name = "WaypointNavigation::Task");
-
         bool configureHook();
-
         void updateHook();
-
+        void errorHook();
+        void stopHook();
         void cleanupHook();
 
     private:
+        void stopRover();
     //	void preprocessPath		(std::vector<base::Waypoint*>& 	waypoints);
     };
 }
