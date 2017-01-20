@@ -103,8 +103,8 @@ void Task::updateHook()
     }
     
     //-------------- State Update from the library to the component
-    waypoint_navigation_lib::NavigationState curentState = pathTracker->getNavigationState();
-    switch(curentState) {
+    waypoint_navigation_lib::NavigationState currentState = pathTracker->getNavigationState();
+    switch(currentState) {
             case waypoint_navigation_lib::DRIVING:{
                 state(DRIVING);
                 break;
@@ -134,6 +134,7 @@ void Task::updateHook()
                 break;
             }
         }
+    _trajectory_status.write((int)currentState);
 
     // Write motion command to the ouput if different from previous
     if(mc.translation != mc_prev.translation || mc.rotation != mc_prev.rotation ){
