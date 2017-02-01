@@ -40,18 +40,21 @@ bool Task::configureHook()
 {
 	if (! TaskBase::configureHook())
       		return false;
+    bool configSuccessful;
+
 	pathTrackerConfig ptConfig = _ptConfig.value();
 	pathTracker = new waypoint_navigation_lib::WaypointNavigation();
-    assert(	pathTracker->configure(
+    configSuccessful = pathTracker->configure(
 		ptConfig.minTurnRadius,
 		ptConfig.translationalVelocity,
 		ptConfig.rotationalVelocity,
 		ptConfig.corridor,
 		ptConfig.lookaheadDistance,
-        ptConfig.backwards));
+        ptConfig.backwards);
+    
     controllerPDConfig pd = _pdConfig.value();
-    pathTracker->configurePD(pd.P, pd.D, pd.saturation);
-    pathTracker->configureTol(_tolPos.value(), _tolHeading.value()*M_PI/180.0);
+    configSuccessful &= pathTracker->configurePD(pd.P, pd.D, pd.saturation);
+    configSuccessful &= pathTracker->configureTol(_tolPos.value(), _tolHeading.value()*M_PI/180.0);
 
     positionValid = false;
 	trajectory.clear();
