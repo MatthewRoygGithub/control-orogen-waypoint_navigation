@@ -137,7 +137,7 @@ void Task::updateHook()
     _trajectory_status.write((int)currentState);
 
     // Write motion command to the ouput if different from previous
-    if(mc.translation != mc_prev.translation || mc.rotation != mc_prev.rotation ){
+    if( _repeatCommand.value() || mc.translation != mc_prev.translation || mc.rotation != mc_prev.rotation ){
         _motion_command.write(mc);
         mc_prev = mc;
     }    

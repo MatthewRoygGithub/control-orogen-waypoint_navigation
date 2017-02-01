@@ -15,6 +15,8 @@ task_context "Task" do
         doc 'Default goal heading tolerance (deg).'
     property('tolPos', 'double').
         doc 'Default distance from the goal position tolerance (m).'
+    property('repeatCommand','bool')
+        doc 'Repeat the same command multiple times'
 
     input_port("trajectory", "/std/vector</base/Waypoint>").
         doc "Trajectory the robot should follow"
