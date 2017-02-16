@@ -86,7 +86,8 @@ void Task::updateHook()
 
     // -------------------   NEW POSE READING   ----------------
     base::samples::RigidBodyState pose;
-    if (_pose.readNewest(pose) != RTT::NoData ){
+    if(_pose.readNewest(pose) != RTT::NoData )
+    {
         positionValid = pathTracker->setPose(pose);
     }
     
@@ -94,14 +95,24 @@ void Task::updateHook()
     // Create zero motion command
     base::commands::Motion2D mc;
     mc.translation = 0.0; mc.rotation = 0.0;
-    if (!trajectory.empty() && positionValid ){
+    if(!trajectory.empty() && positionValid)
+    {
+        // Dirty fix, make a proper state machine here
+        if(pathTracker->getNavigationState() == NO_POSE)
+        {
+            pathTracker->setNavigationState(waypoint_navigation_lib::DRIVING);
+        }
         // If position data are valid, calculate the motion command
         pathTracker->update(mc);
         // Write lookahead point to the output (only if there is the trajectory)
         _currentWaypoint.write(*(pathTracker->getLookaheadPoint()));
-    } else if (positionValid) {
+    }
+    else if(positionValid)
+    {
         pathTracker->setNavigationState(waypoint_navigation_lib::NO_TRAJECTORY);
-    } else {
+    }
+    else
+    {
         pathTracker->setNavigationState(waypoint_navigation_lib::NO_POSE);
     }
     
