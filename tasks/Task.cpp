@@ -98,7 +98,7 @@ void Task::updateHook()
     if(!trajectory.empty() && positionValid)
     {
         // Dirty fix, make a proper state machine here
-        if(pathTracker->getNavigationState() == NO_POSE)
+        if(pathTracker->getNavigationState() == NO_TRAJECTORY || pathTracker->getNavigationState() == NO_POSE)
         {
             pathTracker->setNavigationState(waypoint_navigation_lib::DRIVING);
         }
