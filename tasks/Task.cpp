@@ -98,7 +98,7 @@ void Task::updateHook()
     mc.translation = 0.0; mc.rotation = 0.0;
     if(!trajectory.empty() && positionValid)
     {
-        // Dirty fix, make a proper state machine here
+        // TODO: Dirty fix, make a proper state machine here
         if(pathTracker->getNavigationState() == waypoint_navigation_lib::NO_TRAJECTORY || pathTracker->getNavigationState() == waypoint_navigation_lib::NO_POSE)
         {
             pathTracker->setNavigationState(waypoint_navigation_lib::DRIVING);
@@ -143,6 +143,10 @@ void Task::updateHook()
             }
             case waypoint_navigation_lib::NO_POSE:{
                 state(NO_POSE);
+                break;
+            }
+            case waypoint_navigation_lib::MOVE_TO_START:{
+                state(MOVE_TO_START);
                 break;
             }
             default:{
