@@ -89,7 +89,6 @@ void Task::updateHook()
     if(_pose.readNewest(pose) != RTT::NoData )
     {
         positionValid = pathTracker->setPose(pose);
-		std::cout << "Position valid OK" << std::endl;
     }
     
     // -------------------   MOTION UPDATE      ----------------    
@@ -99,7 +98,7 @@ void Task::updateHook()
     if(!trajectory.empty() && positionValid)
     {
         // Dirty fix, make a proper state machine here
-        if(pathTracker->getNavigationState() == waypoint_navigation_lib::NO_TRAJECTORY || pathTracker->getNavigationState() == waypoint_navigation_lib::NO_POSE)
+        if(pathTracker->getNavigationState() == waypoint_navigation_lib::NO_POSE)
         {
             pathTracker->setNavigationState(waypoint_navigation_lib::DRIVING);
         }
