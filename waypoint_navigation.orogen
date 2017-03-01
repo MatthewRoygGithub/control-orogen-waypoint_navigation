@@ -34,7 +34,7 @@ task_context "Task" do
         doc "reports the state of the trajectory in execution"
 
 
-    runtime_states :DRIVING, :ALIGNING, :TARGET_REACHED, :OUT_OF_BOUNDARIES, :NO_TRAJECTORY, :NO_POSE, :MOVE_TO_START
+    runtime_states :DRIVING, :ALIGNING, :TARGET_REACHED, :OUT_OF_BOUNDARIES, :NO_TRAJECTORY, :NO_POSE
 
     needs_configuration
     port_driven
