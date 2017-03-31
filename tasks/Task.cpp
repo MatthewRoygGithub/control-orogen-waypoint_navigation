@@ -69,8 +69,7 @@ void Task::updateHook()
     // -------------------  TRAJECTORY SETTING   ---------------
     if(_trajectory.readNewest(trajectory) == RTT::NewData ) { // Trajectory input contains new data
         //convert to driver format
-        std::cout << "WaypointNavigation::updateHook(), Task has  "
-                  << trajectory.size() << " points in trajectory." << std::endl;
+        //std::cout << "WaypointNavigation::updateHook(), Task has  " << trajectory.size() << " points in trajectory." << std::endl;
 
 		// Pass the waypoints to the library using pointers
         std::vector<base::Waypoint*> waypoints;
@@ -80,8 +79,7 @@ void Task::updateHook()
             waypoints.push_back(new base::Waypoint(*it)); // Add element to the end of the vector
         }
 		pathTracker->setTrajectory(waypoints);
-        std::cout << "WaypointNavigation::updateHook(), Trajectory set to path tracker."
-                  << std::endl;
+        //std::cout << "WaypointNavigation::updateHook(), Trajectory set to path tracker." << std::endl;
     }
 
     // -------------------   NEW POSE READING   ----------------
