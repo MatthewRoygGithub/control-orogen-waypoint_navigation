@@ -7,7 +7,7 @@
  *
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  *
- * Description: Class encapsulating the pure-pursuit based path 
+ * Description: Class encapsulating the pure-pursuit based path
  * follower, which was implemented for the six-wheeled ExoTeR rover.
  *
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -51,14 +51,14 @@ bool Task::configureHook()
 		ptConfig.corridor,
 		ptConfig.lookaheadDistance,
         ptConfig.backwards);
-    
+
     controllerPDConfig pd = _pdConfig.value();
     configSuccessful &= pathTracker->configurePD(pd.P, pd.D, pd.saturation);
     configSuccessful &= pathTracker->configureTol(_tolPos.value(), _tolHeading.value()*M_PI/180.0);
 
     positionValid = false;
 	trajectory.clear();
-    
+
     mc_prev.translation = 0; mc_prev.rotation = 0;
 
   return true;
@@ -71,7 +71,7 @@ void Task::updateHook()
         //convert to driver format
         std::cout << "WaypointNavigation::updateHook(), Task has  "
                   << trajectory.size() << " points in trajectory." << std::endl;
-        
+
 		// Pass the waypoints to the library using pointers
         std::vector<base::Waypoint*> waypoints;
         for (std::vector<base::Waypoint>::const_iterator it = trajectory.begin();
@@ -80,7 +80,7 @@ void Task::updateHook()
             waypoints.push_back(new base::Waypoint(*it)); // Add element to the end of the vector
         }
 		pathTracker->setTrajectory(waypoints);
-        std::cout << "WaypointNavigation::updateHook(), Trajectory set to path tracker." 
+        std::cout << "WaypointNavigation::updateHook(), Trajectory set to path tracker."
                   << std::endl;
     }
 
@@ -90,8 +90,8 @@ void Task::updateHook()
     {
         positionValid = pathTracker->setPose(pose);
     }
-    
-    // -------------------   MOTION UPDATE      ----------------    
+
+    // -------------------   MOTION UPDATE      ----------------
     // Create zero motion command
     base::commands::Motion2D mc;
     mc.translation = 0.0; mc.rotation = 0.0;
@@ -102,7 +102,7 @@ void Task::updateHook()
         // Write lookahead point to the output (only if there is the trajectory)
         _currentWaypoint.write(*(pathTracker->getLookaheadPoint()));
     }
-    
+
     //-------------- State Update from the library to the component
     waypoint_navigation_lib::NavigationState currentState = pathTracker->getNavigationState();
     switch(currentState) {
@@ -116,7 +116,7 @@ void Task::updateHook()
             }
             case waypoint_navigation_lib::TARGET_REACHED:{
                 state(TARGET_REACHED);
-                mc.translation = 0.00001; 
+                mc.translation = 0.00001;
                 break;
             }
             case waypoint_navigation_lib::OUT_OF_BOUNDARIES:{
@@ -141,7 +141,7 @@ void Task::updateHook()
     if( _repeatCommand.value() || mc.translation != mc_prev.translation || mc.rotation != mc_prev.rotation ){
         _motion_command.write(mc);
         mc_prev = mc;
-    }    
+    }
 
 }
 
@@ -152,7 +152,7 @@ void Task::errorHook(){
 void Task::stopHook(){
 	stopRover();
 }
-  
+
 
 void Task::cleanupHook()
 {
@@ -163,12 +163,12 @@ void Task::cleanupHook()
 void Task::stopRover(){
 	base::commands::Motion2D mc;
     mc.translation = 0.0; mc.rotation = 0.0;
-    if( mc.translation != mc_prev.translation || 
+    if( mc.translation != mc_prev.translation ||
     	mc.rotation    != mc_prev.rotation )
     {
         _motion_command.write(mc);
         mc_prev = mc;
-    }    
+    }
 }
 /*
 void Task::preprocessPath(std::vector<base::Waypoint*>& waypoints){
@@ -176,12 +176,12 @@ void Task::preprocessPath(std::vector<base::Waypoint*>& waypoints){
 	if ( !downsampleGridBasedPath){
 		// Iterate through trajectory received: [1st to Nth] and add each point
 	    for (std::vector<base::Waypoint>::const_iterator it = trajectory.begin();
-	            it != trajectory.end(); ++it) 
+	            it != trajectory.end(); ++it)
 	        {
-	        	waypoints.push_back(new base::Waypoint(*it)); 
+	        	waypoints.push_back(new base::Waypoint(*it));
 	        }
 	} else {
-		// Downsampling requested/ 
+		// Downsampling requested/
 		int dxPrev, dyPrev, dxNext, dyNext;
 		int unitScale = 100; // to cm
 		base::Vector3d currWp, nextWp;
@@ -193,10 +193,10 @@ void Task::preprocessPath(std::vector<base::Waypoint*>& waypoints){
 		dxPrev = round(unitScale*(nextWp.x() - currWp.x()));
 		dyPrev = round(unitScale*(nextWp.y() - currWp.y()));
 		pWaypointToAdd = &trajectory.at(0);
-		waypoints.push_back(pWaypointToAdd); 
+		waypoints.push_back(pWaypointToAdd);
 
 		// Iterate //
-		for (size_t it = 1; it < trajectory.size() - 1 ; it++) 
+		for (size_t it = 1; it < trajectory.size() - 1 ; it++)
 	    {
         	// Shift the waypoints being examined //
         	currWp = nextWp;
@@ -210,7 +210,7 @@ void Task::preprocessPath(std::vector<base::Waypoint*>& waypoints){
 			if (dxPrev != dxNext || dyPrev != dyNext){
 				// Significant, will be added
 				pWaypointToAdd = &trajectory.at(it);
-				waypoints.push_back(pWaypointToAdd); 
+				waypoints.push_back(pWaypointToAdd);
 				// Otherwise does not have to be on the path.
 			}
 			// Shift the calculated [dx, dy] to be used in next iteration //
