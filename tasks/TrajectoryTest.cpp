@@ -97,7 +97,7 @@ bool TrajectoryTest::configureHook()
             trajectory.at(it).heading      = (_goal_heading.get())/180.0*M_PI;
         }
     }
-   std::cout << "TrajectoryTest::configureHook(), Trajectory created." << std::endl;
+   //std::cout << "TrajectoryTest::configureHook(), Trajectory created." << std::endl;
    return true;
 }
 
