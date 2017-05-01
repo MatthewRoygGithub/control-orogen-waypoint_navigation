@@ -42,7 +42,7 @@ bool Task::configureHook()
       		return false;
     bool configSuccessful;
 
-	pathTrackerConfig ptConfig = _ptConfig.value();
+	ptConfig = _ptConfig.value();
 	pathTracker = new waypoint_navigation_lib::WaypointNavigation();
     configSuccessful = pathTracker->configure(
 		ptConfig.minTurnRadius,
@@ -101,6 +101,24 @@ void Task::updateHook()
         _currentWaypoint.write(*(pathTracker->getLookaheadPoint()));
     }
 
+    // -------------- SPEED ADJUSTMENT -------------------------
+    if(_speed_input.connected())
+    {
+	float new_speed;
+	if(_speed_input.read(new_speed) == RTT::NewData)
+	{
+		bool configSuccessful;
+		ptConfig.translationalVelocity = new_speed;
+		configSuccessful = pathTracker->configure(
+                	ptConfig.minTurnRadius,
+                	ptConfig.translationalVelocity,
+                	ptConfig.rotationalVelocity,
+                	ptConfig.corridor,
+                	ptConfig.lookaheadDistance,
+        		ptConfig.backwards);
+	}
+    }
+
     //-------------- State Update from the library to the component
     waypoint_navigation_lib::NavigationState currentState = pathTracker->getNavigationState();
     switch(currentState) {
@@ -114,7 +132,7 @@ void Task::updateHook()
             }
             case waypoint_navigation_lib::TARGET_REACHED:{
                 state(TARGET_REACHED);
-                mc.translation = 0.00001;
+                //mc.translation = 0.00001; // This command puts all wheel straight when reaching the target. Usually would stay in Point Turn configuration.
                 break;
             }
             case waypoint_navigation_lib::OUT_OF_BOUNDARIES:{
