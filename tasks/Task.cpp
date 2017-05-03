@@ -104,7 +104,7 @@ void Task::updateHook()
     // -------------- SPEED ADJUSTMENT -------------------------
     if(_speed_input.connected())
     {
-	float new_speed;
+	double new_speed;
 	if(_speed_input.read(new_speed) == RTT::NewData)
 	{
 		bool configSuccessful;
