@@ -57,6 +57,7 @@ bool Task::configureHook()
     configSuccessful &= pathTracker->configureTol(_tolPos.value(), _tolHeading.value()*M_PI/180.0);
 
     positionValid = false;
+	roverStopped = false;
 	trajectory.clear();
 
     mc_prev.translation = 0; mc_prev.rotation = 0;
@@ -125,38 +126,51 @@ void Task::updateHook()
     waypoint_navigation_lib::NavigationState currentState = pathTracker->getNavigationState();
     switch(currentState) {
             case waypoint_navigation_lib::DRIVING:{
+                roverStopped = false;
                 state(DRIVING);
                 break;
             }
             case waypoint_navigation_lib::ALIGNING:{
                 state(ALIGNING);
+                roverStopped = false;
                 break;
             }
             case waypoint_navigation_lib::TARGET_REACHED:{
                 state(TARGET_REACHED);
+                roverStopped = true;
+                this->stopRover();
                 //mc.translation = 0.00001; // This command puts all wheel straight when reaching the target. Usually would stay in Point Turn configuration.
                 break;
             }
             case waypoint_navigation_lib::OUT_OF_BOUNDARIES:{
                 state(OUT_OF_BOUNDARIES);
+                roverStopped = true;
+                this->stopRover();
                 break;
             }
             case waypoint_navigation_lib::NO_TRAJECTORY:{
                 state(NO_TRAJECTORY);
+                roverStopped = true;
+                this->stopRover();
                 break;
             }
             case waypoint_navigation_lib::NO_POSE:{
                 state(NO_POSE);
+                roverStopped = true;
+                this->stopRover();
                 break;
             }
             default:{
+				// safety first!
+				roverStopped = true;
+                this->stopRover();
                 break;
             }
         }
     _trajectory_status.write((int)currentState);
 
     // Write motion command to the ouput if different from previous
-    if( _repeatCommand.value() || mc.translation != mc_prev.translation || mc.rotation != mc_prev.rotation ){
+    if(( _repeatCommand.value() || mc.translation != mc_prev.translation || mc.rotation != mc_prev.rotation) && !roverStopped ){
         _motion_command.write(mc);
         mc_prev = mc;
     }

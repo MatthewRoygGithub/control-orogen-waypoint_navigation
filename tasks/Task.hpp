@@ -44,6 +44,7 @@ namespace waypoint_navigation {
     	base::commands::Motion2D mc_prev;
 	pathTrackerConfig ptConfig;
     bool positionValid;
+    bool roverStopped;
 	
     public:
         Task(std::string const& name = "WaypointNavigation::Task");
