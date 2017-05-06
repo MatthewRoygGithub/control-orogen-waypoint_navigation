@@ -67,7 +67,8 @@ bool Task::configureHook()
 void Task::updateHook()
 {
     // -------------------  TRAJECTORY SETTING   ---------------
-    if(_trajectory.readNewest(trajectory) == RTT::NewData ) { // Trajectory input contains new data
+    //if(_trajectory.readNewest(trajectory) == RTT::NewData ) { // Trajectory input contains new data
+    if(_trajectory.read(trajectory) == RTT::NewData ) {
         //convert to driver format
         //std::cout << "WaypointNavigation::updateHook(), Task has  " << trajectory.size() << " points in trajectory." << std::endl;
 
@@ -84,7 +85,8 @@ void Task::updateHook()
 
     // -------------------   NEW POSE READING   ----------------
     base::samples::RigidBodyState pose;
-    if(_pose.readNewest(pose) != RTT::NoData )
+//    if(_pose.readNewest(pose) != RTT::NoData )
+    if(_pose.read(pose) != RTT::NoData )
     {
         positionValid = pathTracker->setPose(pose);
     }
