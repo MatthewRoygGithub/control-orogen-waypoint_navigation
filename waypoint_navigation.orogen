@@ -36,6 +36,8 @@ task_context "Task" do
     output_port("trajectory_status", "int").
         doc "reports the state of the trajectory in execution"
 
+    output_port("current_segment", "int").
+        doc "indicates which segment is following the robot"
 
     runtime_states :DRIVING, :ALIGNING, :TARGET_REACHED, :OUT_OF_BOUNDARIES, :NO_TRAJECTORY, :NO_POSE
 
