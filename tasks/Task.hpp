@@ -26,7 +26,7 @@
 
 
 #include "waypoint_navigation/TaskBase.hpp"
-#include <base/waypoint.h>
+#include <base/Waypoint.hpp>
 
 namespace waypoint_navigation_lib{
 	class WaypointNavigation;

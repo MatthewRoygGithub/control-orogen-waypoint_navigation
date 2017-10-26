@@ -27,7 +27,7 @@ task_context "Task" do
     input_port("speed_input", "double").
         doc("Optional speed in [m/s] desired for the trajectory following, if not connected, the property is used")
 
-    output_port("motion_command", "base/MotionCommand2D").
+    output_port("motion_command", "base/commands/Motion2D").
         doc "Drive command that should steer the robot to the target Pose"
 
     output_port("currentWaypoint", "base/Waypoint").
